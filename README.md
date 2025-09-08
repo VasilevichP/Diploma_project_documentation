@@ -35,13 +35,13 @@
 ### C4-модель
 
 Контекстный уровень:
-<img width="865" height="653" alt="изображение" src="https://github.com/user-attachments/assets/0f3f115f-1776-4fc3-9ec2-b17a865642fe" />
+<img width="600" height="500" alt="изображение" src="https://github.com/user-attachments/assets/0f3f115f-1776-4fc3-9ec2-b17a865642fe" />
 
 Контейнерный уровень:
-<img width="943" height="710" alt="изображение" src="https://github.com/user-attachments/assets/5d2bd650-dd6b-442a-bbf6-1bc42fa53dc4" />
+<img width="600" height="500" alt="изображение" src="https://github.com/user-attachments/assets/5d2bd650-dd6b-442a-bbf6-1bc42fa53dc4" />
 
 Компонентный уровень:
-<img width="975" height="553" alt="изображение" src="https://github.com/user-attachments/assets/e8cebb62-b3d1-4eaa-bd2e-ea6e937b90fb" />
+<img width="600" height="500" alt="изображение" src="https://github.com/user-attachments/assets/e8cebb62-b3d1-4eaa-bd2e-ea6e937b90fb" />
 
 ### Схема данных
 
