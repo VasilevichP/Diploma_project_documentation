@@ -68,9 +68,13 @@
 
 
 Компонентный уровень - раскрывает внутреннюю структуру backend-контейнера, спроектированную в соответствии с принципами Clean Architecture.
+
 Domain Layer представлен компонентом Aggregates&Entities, где инкапсулированы все бизнес-правила согласно принципам Domain-Driven Design (DDD). 
+
 Application Layer представлен компонентами CommandHandler и QueryHandler, которые служат для записи и извлечения данных в соответствии с CQRS. 
+
 Infrastructure Layer представлен компонентами NotificationService и Repositories, которые нужны для реализации взаимодействия с внешними сервисами и реализации репозиториев 
+
 Interface Adapters - контроллерами, принимающими HTTP-запросы пользователя и передающие их на выполнение в Application Layer
 
 <img width="600" height="500" alt="изображение" src="https://github.com/user-attachments/assets/f166427e-2b1e-41e1-b85d-af74521f7d47" />
