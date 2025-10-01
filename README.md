@@ -77,7 +77,8 @@ Infrastructure Layer представлен компонентами Notificatio
 
 Interface Adapters - контроллерами, принимающими HTTP-запросы пользователя и передающие их на выполнение в Application Layer
 
-<img width="600" height="500" alt="изображение" src="https://github.com/user-attachments/assets/f166427e-2b1e-41e1-b85d-af74521f7d47" />
+<img width="600" height="500" alt="изображение" src="https://github.com/user-attachments/assets/3ae21fd0-5ddd-4ff2-8b7e-cf308096d04a" />
+
 
 
 Кодовый уровень - показывает структуру классов и интерфейсов прикладного уровня (Application Layer): 
