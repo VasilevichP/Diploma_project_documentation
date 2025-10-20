@@ -125,6 +125,42 @@ Interface Adapters - контроллерами, принимающими HTTP-�
 
 ### Примеры экранов UI
 
+Экран авторизации:
+
+<img width="614" height="436" alt="изображение" src="https://github.com/user-attachments/assets/b151eb16-e9bf-43d3-80c9-634004a97329" />
+
+Экран работы с заявками:
+
+<img width="878" height="495" alt="изображение" src="https://github.com/user-attachments/assets/9bcb11bd-280d-4a48-b531-0ae38285f4ea" />
+
+Экран с деталями заявки:
+
+<img width="911" height="513" alt="изображение" src="https://github.com/user-attachments/assets/81d2fa56-7d66-4ab4-b5d8-a60b0111993a" />
+
+Экран работы с услугами:
+
+<img width="975" height="548" alt="изображение" src="https://github.com/user-attachments/assets/ca45f57a-705d-4350-83d9-b3f5c11bc0bd" />
+
+Экран создания услуги:
+
+<img width="975" height="548" alt="изображение" src="https://github.com/user-attachments/assets/2e664674-36c4-4722-9b1d-793d34e509ad" />
+
+Экран просмотра статистики:
+
+<img width="975" height="548" alt="изображение" src="https://github.com/user-attachments/assets/0065d7fe-2816-4ee6-8741-fd5430e874a2" />
+
+Каталог:
+
+<img width="975" height="551" alt="изображение" src="https://github.com/user-attachments/assets/aac4c0db-8612-4ac9-93a2-4773064c0647" />
+
+Экран с деталями услуги:
+
+<img width="975" height="548" alt="изображение" src="https://github.com/user-attachments/assets/ed756b0f-1c41-4d17-95c2-37a6d1459e20" />
+
+Личный кабинет пользователя:
+
+<img width="975" height="548" alt="изображение" src="https://github.com/user-attachments/assets/098e0979-b0e0-495b-a71b-44fa7c589b30" />
+
 ---
 
 ## **Детали реализации**
