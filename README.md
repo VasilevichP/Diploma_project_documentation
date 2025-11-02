@@ -190,7 +190,71 @@ Interface Adapters - контроллерами, принимающими HTTP-�
 
 ### Безопасность
 
-Описать подходы, использованные для обеспечения безопасности, включая описание процессов аутентификации и авторизации с примерами кода из репозитория сервера
+Для обеспечения аутентификации пользователя была выбрана технология JWT (JSON Web Token). При авторизации пользователю выдается токен, содержащий такую информацию, как ID и роль пользователя, время окончания сессии и т.д. Клиент сохраняет токен и при каждом последующем запросе к серверу отправляет его в заголовке. Сервер же по токену определяет, авторизован ли пользователь в системе и имеет ли он доступ к запрашиваемому ресурсу.
+Для реализации JWT были использованы Nuget-пакеты Microsoft.AspNetCore.Authentication.JwtBearer и System.IdentityModel.
+Tokens.Jwt.
+Ниже представлен листинг кода для генерации токена.
+
+public string GenerateToken(User user)
+    {
+        var claims = new List<Claim>
+        {
+            new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new(JwtRegisteredClaimNames.Email, user.Email),
+            new(ClaimTypes.Role, user.Role.ToString())
+        };
+
+        var key = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(_configuration.GetValue<string>("Jwt:SecretKey")!));
+            
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var tokenDescriptor = new JwtSecurityToken(
+            issuer: _configuration.GetValue<string>("Jwt:Issuer"),
+            audience: _configuration.GetValue<string>("Jwt:Audience"),
+            claims: claims,
+            expires: DateTime.Now.AddHours(6),
+            signingCredentials: creds
+        );
+        return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+    }
+
+Токены также позволяют системе проверять доступ к запрашиваемому ресурсу. Ниже представлен код методов контроллера, которые доступны только авторизованным пользователям с определенной ролью.
+
+[HttpGet("client-list")]
+[Authorize(Roles = "Client")]
+public async Task<IActionResult> GetClientServices()
+{
+        var query = new GetAllForClientQuery();
+        var result = await _mediator.Send(query);
+        return Ok(result);
+}
+
+[HttpGet("manager-list")]
+[Authorize(Roles = "Manager")]
+public async Task<IActionResult> GetManagerServices()
+{
+        var query = new GetAllForManagerQuery();
+        var result = await _mediator.Send(query);
+        return Ok(result);
+}
+
+Таким образом, при попытке неавторизованного пользователя обратиться к какому-либо из этих методов он получит ошибку 401 Unauthorized, если у пользователя не та роль – ошибка 403 Forbidden.
+Также в программе используется хэширование паролей с помощью технологии Bcrypt. Ее суть в том, что при хешировании к паролю добавляется уникальное случайное значение (соль), которое сохраняется вместе с хешем.
+Для этого был использован Nuget-пакет BCrypt.Net-Next. Код методов создания хэш-строки и проверки пароля представлен ниже.
+
+public class PasswordHasher : IPasswordHasher
+{
+    public string HashPassword(string password)
+    {
+        return BCrypt.Net.BCrypt.HashPassword(password);
+    }
+    public bool VerifyPassword(string passwordHash, string providedPassword)
+    {
+        return BCrypt.Net.BCrypt.Verify(providedPassword, passwordHash);
+    }
+}
+
 
 ### Оценка качества кода
 
