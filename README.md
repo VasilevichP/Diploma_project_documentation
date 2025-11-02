@@ -195,7 +195,7 @@ Interface Adapters - контроллерами, принимающими HTTP-�
 Tokens.Jwt.
 Ниже представлен листинг кода для генерации токена.
 
-public string GenerateToken(User user)
+	public string GenerateToken(User user)
     {
         var claims = new List<Claim>
         {
@@ -221,39 +221,39 @@ public string GenerateToken(User user)
 
 Токены также позволяют системе проверять доступ к запрашиваемому ресурсу. Ниже представлен код методов контроллера, которые доступны только авторизованным пользователям с определенной ролью.
 
-[HttpGet("client-list")]
-[Authorize(Roles = "Client")]
-public async Task<IActionResult> GetClientServices()
-{
-        var query = new GetAllForClientQuery();
-        var result = await _mediator.Send(query);
-        return Ok(result);
-}
-
-[HttpGet("manager-list")]
-[Authorize(Roles = "Manager")]
-public async Task<IActionResult> GetManagerServices()
-{
-        var query = new GetAllForManagerQuery();
-        var result = await _mediator.Send(query);
-        return Ok(result);
-}
+	[HttpGet("client-list")]
+	[Authorize(Roles = "Client")]
+	public async Task<IActionResult> GetClientServices()
+	{
+	        var query = new GetAllForClientQuery();
+	        var result = await _mediator.Send(query);
+	        return Ok(result);
+	}
+	
+	[HttpGet("manager-list")]
+	[Authorize(Roles = "Manager")]
+	public async Task<IActionResult> GetManagerServices()
+	{
+	        var query = new GetAllForManagerQuery();
+	        var result = await _mediator.Send(query);
+	        return Ok(result);
+	}
 
 Таким образом, при попытке неавторизованного пользователя обратиться к какому-либо из этих методов он получит ошибку 401 Unauthorized, если у пользователя не та роль – ошибка 403 Forbidden.
 Также в программе используется хэширование паролей с помощью технологии Bcrypt. Ее суть в том, что при хешировании к паролю добавляется уникальное случайное значение (соль), которое сохраняется вместе с хешем.
 Для этого был использован Nuget-пакет BCrypt.Net-Next. Код методов создания хэш-строки и проверки пароля представлен ниже.
 
-public class PasswordHasher : IPasswordHasher
-{
-    public string HashPassword(string password)
-    {
-        return BCrypt.Net.BCrypt.HashPassword(password);
-    }
-    public bool VerifyPassword(string passwordHash, string providedPassword)
-    {
-        return BCrypt.Net.BCrypt.Verify(providedPassword, passwordHash);
-    }
-}
+	public class PasswordHasher : IPasswordHasher
+	{
+	    public string HashPassword(string password)
+	    {
+	        return BCrypt.Net.BCrypt.HashPassword(password);
+	    }
+	    public bool VerifyPassword(string passwordHash, string providedPassword)
+	    {
+	        return BCrypt.Net.BCrypt.Verify(providedPassword, passwordHash);
+	    }
+	}
 
 
 ### Оценка качества кода
