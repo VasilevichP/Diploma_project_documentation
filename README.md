@@ -169,19 +169,23 @@ Interface Adapters - контроллерами, принимающими HTTP-�
 
 Диаграмма последовательности процесса «Управлять заявками»
 
-<img width="800" height="600" alt="изображение" src="https://github.com/user-attachments/assets/5226d354-3ccf-4f93-8bbf-0f7b54cf7bf3" />
+<img width="975" height="593" alt="изображение" src="https://github.com/user-attachments/assets/7f57977d-dc61-4849-b22b-87e034dccde0" />
+
 
 Диаграмма состояний объекта «Заявка»
 
-<img width="400" height="600" alt="изображение" src="https://github.com/user-attachments/assets/896ccb1f-acd4-4b67-a588-d7da72f038a8" />
+<img width="405" height="571" alt="изображение" src="https://github.com/user-attachments/assets/d1094e01-be2e-4356-a0b8-b9397ae962c9" />
+
 
 Диаграмма классов модуля работы с услугами
 
-<img width="1000" height="650" alt="изображение" src="https://github.com/user-attachments/assets/3ba339f6-c78a-46ea-ba87-3111410d0fd2" />
+<img width="975" height="709" alt="изображение" src="https://github.com/user-attachments/assets/f65eb3ce-6320-4adf-be0b-b6fba4604b56" />
+
 
 Диаграмма пакетов
 
-<img width="1000" height="600" alt="изображение" src="https://github.com/user-attachments/assets/3cca17af-d2bc-43c7-a77b-75bc7376a2ac" />
+<img width="686" height="499" alt="изображение" src="https://github.com/user-attachments/assets/9351069c-162a-46c2-9f09-56060f282c33" />
+
 
 
 ### Спецификация API
