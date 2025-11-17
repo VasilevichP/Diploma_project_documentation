@@ -284,7 +284,120 @@ Tokens.Jwt.
 
 ### Манифесты для сборки docker образов
 
-Представить весь код манифестов или ссылки на файлы с ними (при необходимости снабдить комментариями)
+DockerFile для серверной части:
+
+	FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+	WORKDIR /app
+	EXPOSE 8080
+	EXPOSE 8081
+	
+	FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+	ARG BUILD_CONFIGURATION=Release
+	WORKDIR /src
+	COPY ["SmartFix/SmartFix.csproj", "SmartFix/"]
+	RUN dotnet restore "SmartFix/SmartFix.csproj"
+	COPY . .
+	WORKDIR "/src/SmartFix"
+	RUN dotnet build "SmartFix.csproj" -c $BUILD_CONFIGURATION -o /app/build
+	
+	FROM build AS publish
+	ARG BUILD_CONFIGURATION=Release
+	RUN dotnet publish "SmartFix.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+	
+	FROM base AS final
+	WORKDIR /app
+	COPY --from=publish /app/publish .
+	ENTRYPOINT ["dotnet", "SmartFix.dll"]
+
+
+DockerFile для клиентской части:
+	
+	FROM node:20-alpine AS build
+	WORKDIR /app
+	
+	COPY package*.json ./
+	RUN npm install
+	
+	COPY . .
+	RUN npm run build
+	
+	FROM nginx:1.23-alpine AS final
+	
+	COPY --from=build /app/dist /usr/share/nginx/html 
+	COPY nginx.conf /etc/nginx/conf.d/default.conf
+	EXPOSE 80
+	
+	CMD ["nginx", "-g", "daemon off;"]
+
+
+Файл nginx.conf:
+
+	server {
+	  listen 80;
+	
+	  location / {
+	    root   /usr/share/nginx/html;
+	    index  index.html index.htm;
+	    try_files $uri $uri/ /index.html; # Важно для React Router
+	  }
+	
+	  location /api {
+	    proxy_pass http://backend-api;
+	    proxy_set_header Host $host;
+	    proxy_set_header X-Real-IP $remote_addr;
+	    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	  }
+	}
+
+
+compose.yaml:
+
+	services:
+	
+	# --- Сервис Базы Данных (Microsoft SQL Server) ---
+	  database-sql:
+	    image: mcr.microsoft.com/mssql/server:2019-latest
+	    container_name: smartfix-db
+    
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Your_Strong_Password123!"
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - smartfix-db-data:/var/opt/mssql
+
+	  # --- Сервис Бэкенда (ASP.NET Core API) ---
+	  backend-api:
+	    container_name: smartfix-api
+	    build:
+	      context: ./backend
+	      dockerfile: Dockerfile
+	    ports:
+	      - "5000:8080"
+	    environment:
+	      - ConnectionStrings__DefaultConnection=Server=database-sql;Database
+	=SmartFixDB;UserId=sa;Password=Your_Strong_Password123!;MultipleActiveResultSets=true;TrustServerCertificate=True;
+	      - JWT__Secret=THIS_IS_A_VERY_SECRET_KEY_REPLACE_IT_
+	IN_PRODUCTION
+	      depends_on:
+	      - database-sql
+	
+	  # --- Сервис Фронтенда (React + Nginx) ---
+	  frontend-web:
+	    container_name: smartfix-web
+    
+    build:
+      context: ./frontend/SmartFix
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend-api
+	volumes:
+	  smartfix-db-data:
+
+После запуска контейнеров доступ к фронтенду можно получить по адресу http://localhost:3000, к бэкенду – http://localhost:5000.
 
 ### Манифесты для развертывания k8s кластера
 
