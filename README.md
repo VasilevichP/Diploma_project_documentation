@@ -264,7 +264,9 @@ Tokens.Jwt.
 
 ### Оценка качества кода
 
-Используя показатели качества и метрики кода, оценить его качество
+Результаты оценки качества кода: 
+
+<img width="975" height="486" alt="изображение" src="https://github.com/user-attachments/assets/66b402f8-d0da-43fb-bed5-bc1b294b9746" />
 
 ---
 
@@ -272,11 +274,94 @@ Tokens.Jwt.
 
 ### Unit-тесты
 
-Представить код тестов для пяти методов и его пояснение
+Код проверки корректности созания заявки и сохранения ее в репозитории.
+
+	[Fact]
+	    public async Task Handle_Should_CreateRequest_And_SaveToRepository()
+	    {
+	        var command = new CreateRequestCommand
+	        {
+	            ClientId = Guid.NewGuid(),
+	            ServiceId = Guid.NewGuid(),
+	            DeviceTypeId = Guid.NewGuid(),
+	            DeviceModel = "iPhone 13",
+	            Description = "Разбит экран",
+	            Photos = new List<IFormFile>()
+	        };
+        
+        var resultId = await _handler.Handle(command, CancellationToken.None);
+
+        _requestRepositoryMock.Verify(
+            x => x.AddAsync(It.Is<Request>(r => 
+                r.ClientId == command.ClientId && 
+                r.DeviceModel == command.DeviceModel &&
+                r.Status == RequestStatus.New), 
+                It.IsAny<CancellationToken>()), 
+            Times.Once);
+
+        _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        resultId.Should().NotBeEmpty();
+    }
+
+Код проверки создания заявки, когда к ней прикреплено больше 5 фото. В таком случае программа должна выбросить исключение.
+	
+    [Fact]
+    public async Task Handle_Should_ThrowException_When_TooManyPhotos()
+    {
+        var files = new List<IFormFile>();
+        for(int i=0; i<6; i++) files.Add(new Mock<IFormFile>().Object); 
+
+        var command = new CreateRequestCommand
+        {
+            Photos = files
+        };
+
+        await Assert.ThrowsAsync<Exception>(() => 
+            _handler.Handle(command, CancellationToken.None));
+         
+        _requestRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Request>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+}
+
 
 ### Интеграционные тесты
 
-Представить код тестов и его пояснение
+Код для проверки методов регистрации и авторизации. При авторизации клиенту должен возвращаться токен.
+
+	[Fact]
+	    public async Task Register_And_Login_Should_Return_Token()
+	    {
+	        var client = _factory.CreateClient();
+	        var email = $"test_{Guid.NewGuid()}@example.com";
+	        var password = "StrongPassword123!";
+
+        var registerCommand = new RegisterUserCommand
+        {
+            Email = email,
+            Password = password,
+            FirstName = "Test",
+            LastName = "User",
+            Phone = "89990000000"
+        };
+
+        var registerResponse = await client.PostAsJsonAsync("/api/auth/register", registerCommand);
+        registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        var loginCommand = new AuthorizeUserCommand
+        {
+            Email = email,
+            Password = password
+        };
+        
+        var loginResponse = await client.PostAsJsonAsync("/api/auth/authorize", loginCommand);
+
+        loginResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        
+        var loginResult = await loginResponse.Content.ReadFromJsonAsync<LoginResponse>();
+        loginResult.Should().NotBeNull();
+        loginResult!.Token.Should().NotBeNullOrEmpty();
+    }
+	}	
+
 
 ---
 
